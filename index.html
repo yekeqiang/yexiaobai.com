@@ -1,4 +1,522 @@
----
-layout: default
-title: yexiaobai 
----
+#---
+#layout: default
+#title: yexiaobai 
+#---
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Uberobert</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link href="/vendor/twitter-bootstrap/bootstrap/css/bootstrap.css" rel="stylesheet">
+<link href="/vendor/twitter-bootstrap/bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
+<link href="/vendor/font-awesome/latest/css/font-awesome.css" rel="stylesheet">
+<link href="/vendor/google-code-prettify/google-code-prettify/prettify.css" rel="stylesheet">
+<link href="/assets/css/main.css" rel="stylesheet">
+        <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script type="text/javascript" src="/vendor/twitter-bootstrap/bootstrap/js/bootstrap.js"></script>
+<script src="//twitterjs.googlecode.com/svn/trunk/src/twitter.min.js" type="text/javascript"></script>
+<script type="text/javascript" src="/vendor/google-code-prettify/google-code-prettify/prettify.js"></script>
+<script type="text/javascript" src="/assets/js/app.js"></script>
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-37214884-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+    </head>
+    <body id="page-index">
+        
+        <div class="container">
+            <div class="hero-unit">
+    <div class="row">
+        <div class="span12">
+            <div class="row">
+                <div class="span6 intro">
+                    <div class="leader">
+                        <a href="//uberobert.com" id="logo"></a>
+                        <h1><a href="/">Uber<br />Robert</a></h1>
+                        <p>Technology blog about stuff I love!</p>
+                    </div>
+                </div>
+                <div class="span5 stay-updated">
+                    <div id="twitter-status" class="well">
+                        <i class=icon-twitter></i>
+                        <div id="tweet"></div>
+                        <a href="//twitter.com/Robert_Birnie">Follow @Robert_Birnie &raquo;</a>
+                    </div>
+                </div>
+            </div>
+
+        <div class="row newer-older">
+
+
+
+
+
+
+
+
+
+        
+        
+        <a href="/puppet_master_health_check_haproxy" class="older"><i class="icon-arrow-right"></i> Puppet Master Health Check for HAProxy</a>
+        
+    </div>
+    
+
+
+        </div>
+    </div>
+</div>
+
+            <div class="row">
+                <div class="span8">
+                    
+                            
+  
+
+    
+
+<div class="post">
+    <div class="section section-post-meta post">    
+        <h2>            
+            <a href="/crea_2d_sandbox_game">
+            
+                <i class="indicator-icon icon-bullhorn"></i>
+                            
+                Crea the 2D Sandbox Game
+            </a>
+        </h2>
+        <p class="meta">
+            August 29, 2013 by <a href="http://uberobert.com">Robert Birnie</a>
+        </p>
+    </div>
+    
+
+
+
+<p>I finally got some time to sit down and play the beta version of <a href="http://siegegames.com/crea/">Crea by Siege Games</a> and I must say its been great so far. The content seems to have been coming along nicely since the early versions I played and the mechanics are pretty great.  It is really amazing what they've done considering the team size. I'm now just sitting around waiting for bosses. =D</p>
+
+<p>The thing that has me most excited about the game is the mod support. There are so many games that just completely die after one play through because of the lack of new content, but mods seem so easy to make for Crea that this doesn't seem like it'll be an issue, especially if the game gets added on <a href="http://steamcommunity.com/workshop/">Steam Workshop</a> which is their current intent. With mod support I can see enterprising folks turn the game into a 2D Final Fantasy using <a href="http://siegegames.com/weekly-recap-3/">Way Shards</a> to move from world maps to cities. Not to mention the idea of being able to go download a new boss to test your skill.</p>
+
+<p>I've already gone and poked around into the game files. The core game is written as a C++ executable but all the content is regular python files. I even cheated and altered the requirements for the Bone Sword to only take 1 copper to craft. If I was any good at pixel art I would make my own items but I think I'll leave it to the experts. Hint Hint: I want a Smash Bros Hammer.</p>
+
+
+
+</div>
+
+  
+
+    
+
+<div class="post">
+    <div class="section section-post-meta post">    
+        <h2>            
+            <a href="/puppet_master_health_check_haproxy">
+            
+                <i class="indicator-icon icon-bullhorn"></i>
+                            
+                Puppet Master Health Check for HAProxy
+            </a>
+        </h2>
+        <p class="meta">
+            July 15, 2013 by <a href="http://uberobert.com">Robert Birnie</a>
+        </p>
+    </div>
+    
+
+
+
+<p>Basic <a href="http://haproxy.1wt.eu/">HAProxy</a> monitoring for <a href="http://projects.puppetlabs.com/">puppet</a> masters is pretty easy, just have HAProxy check puppet's default port, 8140. This works great for normal usage but what if you want to upgrade the puppet masters or test large manifest changes slowly? Just stopping puppet works for upgrades, but makes it difficult to test the server after the upgrade is complete. Not to mention that there's a chance puppet could die but since HAProxy only tests opening an ssl connection, the node would stay in the VIP. We obviously need a better way to dynamically enable/disable nodes from HAProxy without having to manually edit HAProxy's config.</p>
+
+<p>One possible solution is having HAProxy monitor a file in <code>/var/www/html</code>. This would let us move the file to disable the node in the VIP. Problem solved! But this wouldn't really monitor puppet at all, just its node. If puppet crashed or was off HAProxy would never know. It'd only turn the node off if the whole server was down.</p>
+
+<p>Enter <a href="http://www.xinetd.org/">xinetd</a>. Xinetd gives us a way to launch a simple script that can check on the puppet master and let the HAProxy know the servers status. Then if we need to take the puppet master out of the VIP we can disable xinetd and leave puppet up for additional testing.</p>
+
+<h2>Xinetd Setup</h2>
+
+<p>Below is the script used to monitor the puppet master. This script is essentially a hand coded web server, so we need it to return the proper http status codes (usually handled by apache). HAProxy uses the HTTP 200 or 503 status codes to monitor how the puppet master is doing. If you need a more intensive check you can use the puppet <a href="http://docs.puppetlabs.com/guides/rest_api.html">HTTP API</a>. I'm personally using the <a href="http://docs.puppetlabs.com/guides/rest_api.html#status">Status</a> URL, I don't think it provides any meaningful information other than that the puppetmaster is up. It does not even matter what environment you put in the URL, the environment can not exist and still return true. You could easily change this to monitor a <a href="http://docs.puppetlabs.com/guides/rest_api.html#certificate-status">CA server</a> or something else.</p>
+
+<p>Note that I've set the URL to use the <code>@FQDN</code> fact, you are using puppet? Right? Personally, I'm installing the xinetd service, but not checking it's status. This allows me to stop the service and not have to worry about puppet re-enabling it. Please go to my <a href="https://github.com/rbirnie/puppet-master-health-check">Github</a> to get the most recent copy.</p>
+
+<div class="highlight"><pre><code class="bash"><span class="c">#!/bin/bash</span>
+<span class="c">#</span>
+<span class="c"># Script to make a proxy (ie HAProxy) capable of monitoring puppet master nodes</span>
+<span class="c">#</span>
+<span class="c"># Author: Robert Birnie &lt;rbirnie@gmail.com&gt;</span>
+<span class="c"># Documentation and download: https://github.com/rbirnie/puppet-master-health-check</span>
+<span class="c">#</span>
+<span class="c"># Based on the original script from Unai Rodriguez and Olaf van Zandwijk</span>
+<span class="c">#</span>
+
+<span class="nv">ERR_FILE</span><span class="o">=</span><span class="s2">&quot;/dev/null&quot;</span>
+
+<span class="c">#</span>
+<span class="c"># Curl puppet status for prod</span>
+<span class="c">#</span>
+<span class="nv">puppet_status</span><span class="o">=</span><span class="sb">`</span>/usr/bin/curl -ksS -H <span class="s2">&quot;Accept: pson&quot;</span> https://&lt;%<span class="o">=</span> @fqdn %&gt;:8140/production/status/no_key | <span class="se">\</span>
+               grep <span class="s2">&quot;\&quot;is_alive\&quot;:true&quot;</span> &gt;<span class="k">${</span><span class="nv">ERR_FILE</span><span class="k">}</span> 2&gt;&amp;1; <span class="nb">echo</span> <span class="nv">$?</span><span class="sb">`</span>
+
+<span class="k">if</span> <span class="o">[</span> <span class="s2">&quot;${puppet_status}&quot;</span> <span class="o">==</span> <span class="s2">&quot;0&quot;</span> <span class="o">]</span>
+<span class="k">then</span>
+    <span class="c"># Puppetmaster is running =&gt; return HTTP 200</span>
+    /bin/echo -en <span class="s2">&quot;HTTP/1.1 200 OK\r\n&quot;</span>
+    /bin/echo -en <span class="s2">&quot;Content-Type: text/plain\r\n&quot;</span>
+    /bin/echo -en <span class="s2">&quot;Content-Length: 26\r\n&quot;</span>
+    /bin/echo -en <span class="s2">&quot;\r\n&quot;</span>
+    /bin/echo -en <span class="s2">&quot;Puppetmaster is running.\r\n&quot;</span>
+<span class="k">else</span>
+    <span class="c"># Puppetmaster is off =&gt; return HTTP 503</span>
+    /bin/echo -en <span class="s2">&quot;HTTP/1.1 503 Service Unavailable\r\n&quot;</span>
+    /bin/echo -en <span class="s2">&quot;Content-Type: text/plain\r\n&quot;</span>
+    /bin/echo -en <span class="s2">&quot;Content-Length: 26\r\n&quot;</span>
+    /bin/echo -en <span class="s2">&quot;\r\n&quot;</span>
+    /bin/echo -en <span class="s2">&quot;Puppetmaster has failed.\r\n&quot;</span>
+<span class="k">fi</span>
+</code></pre></div>
+
+
+<p>Next we need the xinetd config to receive requests and run the script. This goes in <code>/etc/xinetd.d/</code>. Alter the 'server' line for the script location. The log location defaults to <code>/var/lib/messages</code> and creates quite a bit of noise. So I have put it in its own file.</p>
+
+<div class="highlight"><pre><code class="bash"><span class="c"># default: on</span>
+<span class="c"># description: puppetmastercheck</span>
+service puppetmastercheck
+<span class="o">{</span>
+<span class="c"># this is a config for xinetd, place it in /etc/xinetd.d/</span>
+    <span class="nv">disable</span> <span class="o">=</span> no
+    <span class="nv">flags</span> <span class="o">=</span> REUSE
+    <span class="nv">socket_type</span> <span class="o">=</span> stream
+    <span class="nv">port</span> <span class="o">=</span> 9200
+    <span class="nb">wait</span> <span class="o">=</span> no
+    <span class="nv">user</span> <span class="o">=</span> nobody
+    <span class="nv">server</span> <span class="o">=</span> /usr/local/sbin/puppetmastercheck
+    <span class="nv">log_type</span> <span class="o">=</span> FILE /var/log/xinetdlog
+    log_on_failure +<span class="o">=</span> USERID
+    <span class="nv">only_from</span> <span class="o">=</span> 0.0.0.0/0
+    <span class="c"># recommended to put the IPs that need</span>
+    <span class="c"># to connect exclusively (security purposes)</span>
+    <span class="nv">per_source</span> <span class="o">=</span> UNLIMITED
+<span class="o">}</span>
+</code></pre></div>
+
+
+<p>Finally, to get xinetd working you need to open up the port used by the server. Add this line to your <code>/etc/services</code> file.</p>
+
+<div class="highlight"><pre><code class="bash">puppetmastercheck      9200/tcp                <span class="c"># puppetmastercheck</span>
+</code></pre></div>
+
+
+<h2>Configure Puppet</h2>
+
+<p>Next we need to configure puppet for our fancy pansy script. This isn't to difficult, but the default <code>/etc/puppet/auth.conf</code> doesn't allow access to the <code>/status/</code> API URL. So add these lines to your auth.conf.</p>
+
+<div class="highlight"><pre><code class="bash"><span class="c"># Allow access for HAProxy puppetmastercheck</span>
+path /status
+auth any
+method find
+allow *
+</code></pre></div>
+
+
+<h2>HAProxy Config</h2>
+
+<p>Now that your script should be working, I'd test it out a few times with curl. And finally we can swap the port within HAProxy.</p>
+
+<div class="highlight"><pre><code class="bash"><span class="c"># Load balanced puppetmasters</span>
+listen puppetmaster_8140 10.0.0.100:8140
+  mode tcp
+  balance <span class="nb">source</span>
+<span class="nb">  hash</span>-type map-based
+  option httpchk
+
+  server puppetmaster1 10.0.0.101:8140 check port 9200 inter 2000 rise 3 fall 3
+  server puppetmaster1 10.0.0.102:8140 check port 9200 inter 2000 rise 3 fall 3
+</code></pre></div>
+
+
+<h2>Conclusion and Credits</h2>
+
+<p>Let me know either in the comments on here or via my <a href="https://github.com/rbirnie/puppet-master-health-check">github</a> of any issues or recommendations. I'm not the sharpest tool in the shed so I'm sure there's a better way to do this!</p>
+
+<p>The basis of the script and xinetd config was from the <a href="https://github.com/olafz/percona-clustercheck">Percona Clustercheck</a> by Olaf van Zandwijk. Thanks!</p>
+
+
+
+</div>
+
+  
+
+    
+
+<div class="post">
+    <div class="section section-post-meta post">    
+        <h2>            
+            <a href="/random_walk_down_wall_street">
+            
+                <i class="indicator-icon icon-bullhorn"></i>
+                            
+                A Random Walk Down Wall Street
+            </a>
+        </h2>
+        <p class="meta">
+            June 28, 2013 by <a href="http://uberobert.com">Robert Birnie</a>
+        </p>
+    </div>
+    
+
+
+
+<p>Although my profession is in the technology industry, I've always been interested in finance, Wall Street and investing. I've read a number of personal investment books and just finished reading <a href="http://www.amazon.com/Random-Walk-Down-Wall-Street/dp/0393340740/">A Random Walk Down Wall Street</a>. I must say this is the best investment book I've read so far. Most books I've read have fit in either the "inside view into the world of finance" (i.e. <a href="http://www.amazon.com/Big-Short-Inside-Doomsday-Machine/dp/B00ANYJ3NI/">The Big Short</a>) or a more basic "follow this formula and you'll be rich" (i.e. <a href="http://www.amazon.com/Your-Money-Ratios-Financial-ebook/dp/B002YJK5O6/">You're Money Ratios</a>). This book takes a stab at both categories by first picking apart the wider finance industry and its pitfalls and then looking at how you should invest to work around all the sharks out there.</p>
+
+<p>The main premise really stuck with me as well. The book holds that stocks follow a <a href="http://en.wikipedia.org/wiki/Random_walk_hypothesis">random walk</a> and that one cannot consistently outperform the market (proven by a look at mutual fund/hedge fund returns). Because you can't consistently outperform the market, the greatest gains are made by diversifying as much as possible in broad market indexes focused on low fees.</p>
+
+<p>Based on this I've been looking at diversifying my current savings portfolio into a number of funds:</p>
+
+<ul>
+<li><a href="https://personal.vanguard.com/us/funds/snapshot?FundId=0970&amp;FundIntExt=INT">Vanguard Total Stock Market ETF</a> (VTI, expense ratio 0.06%)</li>
+<li><a href="https://personal.vanguard.com/us/funds/snapshot?FundId=0936&amp;FundIntExt=INT">Vanguard MSCI EAFE ETF</a> (VEA, expense ratio 0.12%)</li>
+<li><a href="https://personal.vanguard.com/us/funds/snapshot?FundId=0964&amp;FundIntExt=INT">Vanguard FTSE Emerging Markets ETF</a> (VWO, expense ratio 0.18%)</li>
+</ul>
+
+
+<p>Between these three I get good global diversification in all major markets. Building on this I'll likely move our 401k assets into a different asset class and due to it's no-tax status I think it'd be best to focus on dividend/income paying funds. Currently I'm moving into a REIT and will likely do a dividend stock fund and possibly a corporate bond fund as well.</p>
+
+<ul>
+<li><a href="https://personal.vanguard.com/us/funds/snapshot?FundId=0986&amp;FundIntExt=INT">Vanguard REIT ETF</a> (VNQ, expense ratio 0.10%)</li>
+</ul>
+
+
+<p>The main reason for choosing Vanguard for all 4 funds is that their fees are by far the lowest in the industry and these funds have a good track record of tracking the underlying index.</p>
+
+
+
+</div>
+
+  
+
+    
+
+<div class="post">
+    <div class="section section-post-meta post">    
+        <h2>            
+            <a href="/foreman_trends">
+            
+                <i class="indicator-icon icon-bullhorn"></i>
+                            
+                Foreman Trends
+            </a>
+        </h2>
+        <p class="meta">
+            June 25, 2013 by <a href="http://uberobert.com">Robert Birnie</a>
+        </p>
+    </div>
+    
+
+
+
+<p>I'm super excited about the 1.1 release of <a href="http://theforeman.org/">Foreman</a>, as it has a chunk of my code in there! My old work needed a way to track historical trends in our infrastructure over time and gave me the task of coming up with a solution. The Trend pages in Foreman give a graph of the number of hosts with a puppet fact value over time, and the list of current hosts.</p>
+
+<p><a href="http://puppetlabs.com/">Puppet</a> is great for finding current data points using <a href="http://www.puppetlabs.com/puppet/related-projects/facter/">Facter</a>. Facter is flexible in allowing you to create custom facts to track and has a slew of pre-built facts. But Facter has a pretty short memory as it only shows the current configuration, and each time the host reports into the puppet server it overwrites its prior entry (sorta, you could dig through fact reports by hand).</p>
+
+<p><a href="http://theforeman.org/">Foreman</a> integrates with puppet and receives puppet reports and fact updates and can give great insight into how the infrastructure is performing, but also had a short memory. So in comes Foreman Trends and the ability to track facts/foreman information over time. This a very excellent solution as facter is very extensible, so if we find a need to track anything new in the future we can easily add a puppet fact.</p>
+
+<h2>Setup</h2>
+
+<p>There are two pieces to the Trends area, the Trends to track and their corresponding counters. To define trend counters, use the "Add Trend Counter" button on the '/trends' page. Optionally set the "Name" field to over-ride odd puppet fact names to be more readable. Once created you can optionally 'Edit' the Trend to change the display names of the underlying values.</p>
+
+<p>Next, to start collecting trend data, set a cron job to execute 'rake trends:counter' (note the RPMs set this up on their own). Each time the rake task executes it will create 1 tick on the graphs, so you can fine tune the granularity with your cron job. The granularity is dependent on how much history you want to show, if you are showing 30 days, 1 hour granularity should be good. If you are displaying longer periods then you may want to increase the number as that will speed up the page load. Here's an example to run once per hour:</p>
+
+<div class="highlight"><pre><code class="sh">0 * * * * <span class="nb">cd</span> /usr/share/foreman/ <span class="o">&amp;&amp;</span> /usr/bin/rake trends:counter
+</code></pre></div>
+
+
+<h1>How it Looks</h1>
+
+<p>Here's a couple screenshots. The first shows a category page for the Environment fact. The next shows a specific fact, in this case hosts with CentOS 5.9.
+<img src="/assets/images/foreman_env.png"></p>
+
+<p><img src="/assets/images/foreman_trends.png"></p>
+
+<h2>Future Ideas</h2>
+
+<p>I'm toying with a few possible changes.</p>
+
+<ul>
+<li>Move the data into a ajax api call rather than served directly with page load.</li>
+<li>Scope Trends data by puppet environment</li>
+</ul>
+
+
+<p>Let me know if you want to see something on it!</p>
+
+
+
+</div>
+
+  
+
+    
+
+<div class="post">
+    <div class="section section-post-meta post">    
+        <h2>            
+            <a href="/early_retirement">
+            
+                <i class="indicator-icon icon-bullhorn"></i>
+                            
+                Early Retirement
+            </a>
+        </h2>
+        <p class="meta">
+            March 27, 2013 by <a href="http://uberobert.com">Robert Birnie</a>
+        </p>
+    </div>
+    
+
+
+
+<p>Saw this article on USA Today about <a href="http://www.usatoday.com/story/money/personalfinance/2013/03/26/extreme-early-retirement-30s/1997363/">early retirement</a>. The article hits on a lot of really good points that I've felt for a few years now. I personally believe that all the retirement mumbo-jumbo out there is a little wrong, or at least non-optimal. My personal goal is not so much to retire early but to be finished saving for retirement early so I can maximize the value of compounding (and have a lot of fun after its off the list). For example finish saving by 35 then just topping up for fun as I get older from there.</p>
+
+<p>The basic nature of compounding or from the article "nest-egg mathematics" (sorta) easily allows for this. Each $1 saved while young equals a lot more than $1 when you finally decide to retire. For example if you are retiring at 65, each $1 saved while 25 would equal roughly $8 at retirement at 65 while someone who is a little behind the game and playing catch-up at age 55, each $1 saved would be roughly $2 at retirement; a huge difference!</p>
+
+<p>This compounding math that makes a dollar worth more going forward can also be dialed backwards to see what that nest egg would require earlier. Using this number as soon as you hit the desired growth line you can take your hands off the retirement nest egg and let it grow on its own for the rest of your life while you do what you want with the rest of your money.</p>
+
+<p>Lets look at some numbers. Note these are rough napkin numbers, nothing official. They assume an account doubles in 10 years which is roughly 7% interest.</p>
+
+<p>First, how much do we want in retirement. I'm setting an arbitrary $100k a year, I think this would be enough for me to be pretty comfortable. Assuming 7% growth, if you withdraw 4% a year your savings will still grow by 3% a year, allowing you to increase payments throughout your life to keep up with inflation. So following this 4% rule we'd need $2.5M to retire (100k/4*100). So based on 7% growth, 100k income and $2.5M nest egg; here's the table of goal numbers we want to try to attain.</p>
+
+<table class="table table-bordered table-condensed" style="width: 300px">
+    <tr>
+      <th>Nest Egg</th>
+      <th>Age</th>
+      <th>Years to Retire</th>
+    </tr>
+    <tr>
+      <td>$2.5M</td>
+      <td>65</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>$1.25M</td>
+      <td>55</td>
+      <td>10</td>
+    </tr>
+    <tr>
+      <td>$625K</td>
+      <td>45</td>
+      <td>20</td>
+    </tr>
+    <tr>
+      <td>$312.5K</td>
+      <td>35</td>
+      <td>30</td>
+    </tr>
+    <tr>
+      <td>$156.25K</td>
+      <td>25</td>
+      <td>40</td>
+    </tr>
+    <tr>
+      <td>$78.125K</td>
+      <td>15</td>
+      <td>50</td>
+    </tr>
+    <tr>
+      <td>$39K</td>
+      <td>5</td>
+      <td>60</td> 
+    </tr>
+</table>
+
+
+<p>Super! So if we can save roughly $312.5k by the time we hit 35 then we're done! I'm around 25 (just to keep the numbers easy) so in order to attain this savings amount by 35 I'd need to put away roughly $3,654 a month or $43,848 a year. This is roughly the same as maxing out two 401ks and IRA accounts (46K) for 10 years. From here each contribution over this amount pushes the day of retirement closer to us, if we can hit $625k then retirement is just 20 years out instead of 30.</p>
+
+<p>I know these numbers are way simplified. If I get around to it I'll write more in-depth blogs on the analysis of the retirement numbers and the figures required for early retirement. If you have any questions comment or shoot me a line and I'll work to expand those areas out.</p>
+
+<p>Finally, if you want to really help your child out, forget the college savings plan. Put $39k into a savings account for them at age 5, retirement = done.</p>
+
+
+
+</div>
+
+<a href="/archive" class="archive-link">All posts <i class="icon-arrow-right"></i></a>
+                        
+                </div>
+                <div class="span4 sidebar">
+                    <div class="about well">
+
+        <h2>
+            <i class="icon-question-sign"></i> 
+            What is Going on Here?
+        </h2>
+        <p>
+            <strong>Uberobert is a personal blog/site for me! Robert Birnie.</strong>
+        </p>
+        <p>
+            I'm an IT Professional, Systems Engineer and budding entrepreneur.
+        </p>
+        <a href="/about.html">See more.</a>
+</div>
+
+                    <div class="well">
+    <h2><i class="icon-star-empty"></i> Recent posts</h2>
+          <ul class="listless">
+      
+          <li>
+              
+              <a href="/crea_2d_sandbox_game">Crea the 2D Sandbox Game</a>
+              
+          </li>
+      
+          <li>
+              
+              <a href="/puppet_master_health_check_haproxy">Puppet Master Health Check for HAProxy</a>
+              
+          </li>
+      
+          <li>
+              
+              <a href="/random_walk_down_wall_street">A Random Walk Down Wall Street</a>
+              
+          </li>
+      
+          <li>
+              
+              <a href="/foreman_trends">Foreman Trends</a>
+              
+          </li>
+      
+          <li>
+              
+              <a href="/early_retirement">Early Retirement</a>
+              
+          </li>
+      
+      </ul>
+    <a href="/archive/" class="btn">All posts <i class="icon-arrow-right"></i></a>   
+</div>
+                    
+<div class="well">
+    <h2><i class="icon-github-sign"></i> Stay up to Date</h2>
+    <ul class="repository-list">
+        <li><i class="icon-rss"></i> <a href="http://feeds.feedburner.com/uberobert">RSS</a></li>
+        <li><i class="icon-envelope"></i> <a href="http://feedburner.google.com/fb/a/mailverify?uri=Uberobert&amp;loc=en_US">Email</a></li>
+        <li><i class="icon-twitter"></i> <a href="http://twitter.com/Robert_Birnie">Twitter</a></li>
+        <li><i class="icon-github"></i> <a href="https://github.com/rbirnie">github</a></li>
+        <li class="icon"><a href="/subscribe">More</a></li>
+    </ul>
+</div>
+
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
