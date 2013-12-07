@@ -1,0 +1,19 @@
+# Jekyll
+exclude: nbproject, README.md, manifest.yml, rakefile.rb, Gemfile, Gemfile.lock, update.sh
+permalink:   /:title
+url:         http://yexiaobai.com
+
+safe:        false
+auto:        false
+
+future:      false
+pygments:    true
+markdown:    rdiscount
+
+# Site
+yexiabai:
+    title: Yexiaobai
+
+# Only First P Plugin
+only_first_p:
+    show_read_more_link: false
